@@ -252,3 +252,10 @@ Java_com_google_android_filament_View_nSetBlendMode(JNIEnv *, jclass , jlong nat
     View* view = (View*) nativeView;
     view->setBlendMode((View::BlendMode)blendMode);
 }
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_google_android_filament_View_nSetDepthOfFieldOptions(JNIEnv *, jclass ,
+        jlong nativeView, jfloat focusDistance, jboolean enabled) {
+    View* view = (View*) nativeView;
+    view->setDepthOfFieldOptions({ .focusDistance = focusDistance, .enabled = (bool)enabled });
+}
