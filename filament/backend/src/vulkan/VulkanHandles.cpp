@@ -677,5 +677,26 @@ void VulkanRenderPrimitive::setBuffers(VulkanVertexBuffer* vertexBuffer,
     }
 }
 
+VulkanTimerQuery::VulkanTimerQuery(VulkanContext& context) : mContext(context) {
+    VulkanTimeStamps& queries = context.timestamps;
+    assert(queries.used.count() + 2 <= queries.used.size());
+    auto findAndSetLowestBit = [](decltype(queries.used)& bits) {
+        for (size_t i = 0; i < bits.size(); i++) {
+            if (!bits[i]) {
+                bits.set(i);
+                return i;
+            }
+        }
+        return (size_t) -1;
+    };
+    startingQueryIndex = findAndSetLowestBit(queries.used);
+    stoppingQueryIndex = findAndSetLowestBit(queries.used);
+}
+
+VulkanTimerQuery::~VulkanTimerQuery() {
+    mContext.timestamps.used.unset(startingQueryIndex);
+    mContext.timestamps.used.unset(stoppingQueryIndex);
+}
+
 } // namespace filament
 } // namespace backend
